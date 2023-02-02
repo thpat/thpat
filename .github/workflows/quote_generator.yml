@@ -1,30 +1,26 @@
-const axios = require("axios");
-const fs = require("fs");
+name: quote_generator
 
-const getQuote = async () => {
-  try {
-    const { data } = await axios.get("https://quotes.rest/qod?language=en&quot;);
-    const quote = data.contents.quotes[0].quote;
-    const author = data.contents.quotes[0].author;
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: "0 0 * * *"
 
-    console.log("new quote", `"${quote}"`);
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-    return {
-      quote,
-      author,
-    };
-  } catch (err) {
-    console.error(err.message);
-    return {};
-  }
-};
-
-const generate = async () => {
-  const { quote, author } = await getQuote();
-
-  if (!quote) return;
-
-  fs.writeFileSync("README.md", `_**${quote}**_\n\n${author}`);
-};
-
-generate();
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12.16.1
+    - run: npm ci
+    - name: Generate quote
+      run: npm run generate
+    - name: Update README.md
+      run: |
+        git config --global user.email "hoangnn93@gmail.com"
+        git config --global user.name "codeaholicguy"
+        git add .
+        git commit -m "Updated README.md" || echo "No changes to commit"
+        git push
