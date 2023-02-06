@@ -1,1 +1,3 @@
-![snake gif](https://github.com/thpat/thpat/blob/output/github-contribution-grid-snake.gif)
+_**Even if you're on the right track, you'll get run over if you just sit there..**_
+
+Will Rogers
